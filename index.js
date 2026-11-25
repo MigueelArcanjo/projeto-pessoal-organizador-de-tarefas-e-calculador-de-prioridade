@@ -1,41 +1,166 @@
-// ORGANIZADOR DE TAREFAS E CALCULADOR DE PRIORIDADE //
 
-// QUANTIDADE DE DIAS QUE PASSARAM ANTES DE CADA MÊS //
-const janeiro = 0
-const fevereiro = 31
-const marco = 59
-const abril = 90
-const maio = 120
-const junho = 151
-const julho = 181
-const agosto = 212
-const setembro = 243
-const outubro = 273
-const novembro = 304
-const dezembro = 334
+const prompt = require("prompt-sync")()
 
-// MATÉRIA E TAREFA //
-const materia = "sociologia" 
-const tarefa = "Figuras de linguagem"
-let dificuldade
+const meses = [
+    0,   // janeiro //
+    31,  // fevereiro //
+    59,  // março //
+    90,  // abril //
+    120, // maio //
+    151, // junho //
+    181, // julho //
+    212, // agosto //
+    243, // setembro //
+    273, // outubro //
+    304, // novembro //
+    334  // dezembro //
+]
 
-// DATAS //
-const diaHoje = 20
-const mesHoje = setembro
-const nomeMesHoje = "setembro"
+const tarefas = [
+]
 
-const diaEntrega = 6
-const mesEntrega = outubro
-const nomeMesEntrega = "outubro"
+const calcularDiasRestantes = (hojeEmDias, entregaEmDias) => entregaEmDias - hojeEmDias
 
-// CALCULO DE DIAS RESTANTES //
-const hojeEmDias = mesHoje + diaHoje
-const entregaEmDias = mesEntrega + diaEntrega
-const diasRestantes = entregaEmDias - hojeEmDias
+let continuar = "s"
 
-let prioridade
+do {
+const materia = prompt("Digite a matéria da tarefa: ")
+const tarefa = prompt("Digite o assunto da tarefa: ")
+let dificuldade = ""
 
-if (diasRestantes < 0) {
+const diaHoje = Number(prompt("Digite o dia de hoje: "))
+const mesHoje = Number(prompt("Digite o mês de hoje (em número): "))
+const nomeMesHoje = prompt("Digite o nome do mês de hoje: ")
+
+const diaEntrega = Number(prompt("Digite o dia de entrega: "))
+const mesEntrega = Number(prompt("Digite o mês de entrega (em número): "))
+const nomeMesEntrega = prompt("Digite o nome do mês de entrega: ")
+
+const hojeEmDias = meses[mesHoje - 1] + diaHoje
+const entregaEmDias = meses[mesEntrega - 1] + diaEntrega
+const diasRestantes = calcularDiasRestantes(hojeEmDias, entregaEmDias)
+
+const prioridade = calcularPrioridade(diasRestantes)
+
+switch (materia) {
+
+    case "arquitetura e manutencao de computadores":
+    case "biologia":
+    case "fisica":
+    case "logica de programacao":
+    case "matematica":
+    case "quimica":
+        dificuldade = "Difícil"
+    break
+
+    case "filosofia":
+    case "geografia":
+    case "historia":
+    case "html/css":
+    case "portugues":
+    case "redacao":
+        dificuldade = "Média"
+    break
+
+    case "arte":
+    case "educacao fisica":
+    case "espanhol":
+    case "ingles":
+    case "planejamento de carreira":
+    case "sociologia":
+        dificuldade = "Fácil"
+    break
+
+    default:
+        dificuldade = "Matéria não identificada, tente colocar o nome da matéria sem maiúsculos e sem acentuação."
+}
+
+const novaTarefa = {
+    materia: materia,
+    tarefa: tarefa,
+    dificuldade: dificuldade,
+    diaEntrega: diaEntrega,
+    mesEntrega: mesEntrega,
+    nomeMesEntrega: nomeMesEntrega,
+    diasRestantes: diasRestantes,
+    prioridade: prioridade
+}
+tarefas.push(novaTarefa)
+
+continuar = prompt("Deseja adicionar outra tarefa? (s/n): ")
+
+} while (continuar === "s") 
+
+for (let i = 0; i < tarefas.length; i++) {
+    console.log("TAREFA " + (i + 1))
+    console.log("Matéria: " + tarefas[i].materia)
+    console.log("Assunto da tarefa: " + tarefas[i].tarefa)
+    console.log("Dificuldade: " + tarefas[i].dificuldade)
+    console.log("prioridade: " + tarefas[i].prioridade)
+    console.log("Entrega: " + tarefas[i].diaEntrega + " de " + tarefas[i].nomeMesEntrega)
+    console.log("Dias restantes para entrega: " + tarefas[i].diasRestantes)
+    console.log(" ")
+}
+function estatisticas() {
+
+let tarefasAtrasadas = 0
+
+for (let i = 0; i < tarefas.length; i++) {
+    if (tarefas[i].diasRestantes < 0) {
+        tarefasAtrasadas++
+    }
+}
+
+console.log("Número de tarefas atrasadas: " + tarefasAtrasadas)
+
+let tarefasUrgentes = 0
+
+for (let i = 0; i < tarefas.length; i++) {
+    if (tarefas[i].prioridade === "Urgente") {
+        tarefasUrgentes++
+    }
+}
+
+console.log("Número de tarefas urgentes: " + tarefasUrgentes)
+
+let tarefasAltas = 0
+
+for (let i = 0; i < tarefas.length; i++) {
+    if (tarefas[i].prioridade === "Alta") {
+        tarefasAltas++
+    }
+}
+
+console.log("Número de tarefas de alta prioridade: " + tarefasAltas)
+
+let tarefasMedias = 0
+
+for (let i = 0; i < tarefas.length; i++) {
+    if (tarefas[i].prioridade === "Média") {
+        tarefasMedias++
+    }
+}
+
+console.log("Número de tarefas de média prioridade: " + tarefasMedias)
+
+let tarefasBaixas = 0
+
+for (let i = 0; i < tarefas.length; i++) {
+    if (tarefas[i].prioridade === "Baixa") {
+        tarefasBaixas++
+    }
+}
+
+console.log("Número de tarefas de baixa prioridade: " + tarefasBaixas)
+}
+
+estatisticas()
+
+function calcularPrioridade(diasRestantes) {
+
+let prioridade = ""
+
+    if (diasRestantes < 0) {
     prioridade = "Você perdeu o prazo de entrega."
 } else if (diasRestantes <= 1) {
     prioridade = "Urgente"
@@ -47,58 +172,5 @@ if (diasRestantes < 0) {
     prioridade = "Baixa"
 }
 
-// DIFICULDADE DAS MATERIAS //
-if (materia === "arquitetura e manutencao de computadores") {
-    dificuldade = "Difícil" 
-} else if (materia === "arte") {
-    dificuldade = "Fácil" 
-} else if (materia === "biologia") {
-    dificuldade = "Difícil"
-} else if (materia === "educacao fisica") {
-    dificuldade = "Fácil"
-} else if (materia === "filosofia") {
-    dificuldade = "Média"
-} else if (materia === "fisica") {
-    dificuldade = "Difícil" 
-} else if (materia === "geografia") {
-    dificuldade = "Média"
-} else if (materia === "historia") {
-    dificuldade = "Média"
-} else if (materia === "html/css") {
-    dificuldade = "Média"
-} else if (materia === "espanhol") {
-    dificuldade = "Fácil"
-} else if (materia === "ingles") {
-    dificuldade = "Fácil"
-} else if (materia === "portugues") {
-    dificuldade = "Média"
-} else if (materia === "logica de programacao") {
-    dificuldade = "Difícil"
-} else if (materia === "matematica") {
-    dificuldade = "Difícil"
-} else if (materia === "planejamento de carreira") {
-    dificuldade = "Fácil"
-} else if (materia === "quimica") {
-    dificuldade = "Fácil"
-} else if (materia === "redacao") {
-    dificuldade = "Média"
-} else if (materia === "sociologia") { 
-    dificuldade = "Fácil"
-} else {
-  dificuldade = "A dificuldade não pode ser declarada pois a matéria nao foi identificada, tente não usar letras maiúsculas nem acentuação."
+return prioridade 
 }
-
-const resumo = `
-=================================================
-ORGANIZADOR DE TAREFAS E CALCULADOR DE PRIORIDADE
-=================================================
-Matéria: ${materia}
-Assunto da tarefa: ${tarefa}
-Dificuldade da matéria: ${dificuldade}
-Dia de hoje: ${diaHoje} de ${nomeMesHoje}
-Prazo de entrega: ${diaEntrega} de ${nomeMesEntrega}
-Dias restantes para entrega da atividade: ${diasRestantes} dias.
-Prioridade: ${prioridade}
-`
-
-console.log(resumo)
